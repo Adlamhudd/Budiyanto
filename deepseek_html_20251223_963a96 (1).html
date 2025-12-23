@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencatat Keuangan Sederhana</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #4a6fa5;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .saldo-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .saldo-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        
+        .saldo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .saldo-item:last-child {
+            border-bottom: none;
+        }
+        
+        .saldo-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .saldo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .bank { background-color: #3498db; }
+        .cash { background-color: #2ecc71; }
+        .credit { background-color: #e74c3c; }
+        .shopeepay { background-color: #ff6b35; }
+        .isaku { background-color: #9b59b6; }
+        
+        .saldo-amount {
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .saldo-amount:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .positive {
+            color: #27ae60;
+        }
+        
+        .negative {
+            color: #e74c3c;
+        }
+        
+        .transaction-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .transaction-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-income {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-income:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-expense {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .btn-expense:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-reset {
+            background-color: #f39c12;
+            color: white;
+            margin-top: 10px;
+        }
+        
+        .btn-reset:hover {
+            background-color: #d68910;
+        }
+        
+        .history-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        .history-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .history-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s ease;
+        }
+        
+        .history-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-desc {
+            flex: 1;
+        }
+        
+        .history-amount {
+            font-weight: bold;
+            margin-left: 15px;
+        }
+        
+        .income-text {
+            color: #27ae60;
+        }
+        
+        .expense-text {
+            color: #e74c3c;
+        }
+        
+        .history-date {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-left: 15px;
+        }
+        
+        .total-saldo {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #2c3e50;
+            color: white;
+            border-radius: 10px;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .edit-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .edit-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+        }
+        
+        .btn-cancel {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .btn-save {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-save:hover {
+            background-color: #27ae60;
+        }
+        
+        .saldo-actions {
+            display: flex;
+            gap: 5px;
+            margin-left: 10px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 2px 5px;
+            border-radius: 3px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .edit-saldo-btn {
+            color: #3498db;
+        }
+        
+        .edit-saldo-btn:hover {
+            background-color: #ebf5fb;
+        }
+        
+        .reset-saldo-btn {
+            color: #e74c3c;
+        }
+        
+        .reset-saldo-btn:hover {
+            background-color: #fdedec;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Pencatat Keuangan Sederhana</h1>
+        <p>Kelola keuangan Anda dengan mudah - Pantau saldo Bank, Cash, Kartu Kredit, Shopeepay, dan Isaku</p>
+    </div>
+    
+    <div class="container">
+        <div class="saldo-section">
+            <h2>Saldo Saat Ini</h2>
+            <div class="saldo-item">
+                <div class="saldo-name">
+                    <div class="saldo-icon bank">B</div>
+                    <div>
+                        <div>Saldo Bank</div>
+                        <div style="font-size: 0.8rem; color: #7f8c8d;">Rekening Utama</div>
+                    </div>
+                </div>
+                <div class="saldo-amount positive" id="saldo-bank" onclick="editSaldo('bank')">Rp 0</div>
+                <div class="saldo-actions">
+                    <button class="action-btn edit-saldo-btn" onclick="editSaldo('bank')" title="Edit saldo">✏️</button>
+                    <button class="action-btn reset-saldo-btn" onclick="resetSingleSaldo('bank')" title="Reset saldo">🔄</button>
+                </div>
+            </div>
+            
+            <div class="saldo-item">
+                <div class="saldo-name">
+                    <div class="saldo-icon cash">C</div>
+                    <div>
+                        <div>Saldo Cash</div>
+                        <div style="font-size: 0.8rem; color: #7f8c8d;">Uang Tunai</div>
+                    </div>
+                </div>
+                <div class="saldo-amount positive" id="saldo-cash" onclick="editSaldo('cash')">Rp 0</div>
+                <div class="saldo-actions">
+                    <button class="action-btn edit-saldo-btn" onclick="editSaldo('cash')" title="Edit saldo">✏️</button>
+                    <button class="action-btn reset-saldo-btn" onclick="resetSingleSaldo('cash')" title="Reset saldo">🔄</button>
+                </div>
+            </div>
+            
+            <div class="saldo-item">
+                <div class="saldo-name">
+                    <div class="saldo-icon credit">K</div>
+                    <div>
+                        <div>Saldo Kartu Kredit</div>
+                        <div style="font-size: 0.8rem; color: #7f8c8d;">Limit tersisa</div>
+                    </div>
+                </div>
+                <div class="saldo-amount positive" id="saldo-credit" onclick="editSaldo('credit')">Rp 0</div>
+                <div class="saldo-actions">
+                    <button class="action-btn edit-saldo-btn" onclick="editSaldo('credit')" title="Edit saldo">✏️</button>
+                    <button class="action-btn reset-saldo-btn" onclick="resetSingleSaldo('credit')" title="Reset saldo">🔄</button>
+                </div>
+            </div>
+            
+            <div class="saldo-item">
+                <div class="saldo-name">
+                    <div class="saldo-icon shopeepay">S</div>
+                    <div>
+                        <div>Saldo Shopeepay</div>
+                        <div style="font-size: 0.8rem; color: #7f8c8d;">E-wallet</div>
+                    </div>
+                </div>
+                <div class="saldo-amount positive" id="saldo-shopeepay" onclick="editSaldo('shopeepay')">Rp 0</div>
+                <div class="saldo-actions">
+                    <button class="action-btn edit-saldo-btn" onclick="editSaldo('shopeepay')" title="Edit saldo">✏️</button>
+                    <button class="action-btn reset-saldo-btn" onclick="resetSingleSaldo('shopeepay')" title="Reset saldo">🔄</button>
+                </div>
+            </div>
+            
+            <div class="saldo-item">
+                <div class="saldo-name">
+                    <div class="saldo-icon isaku">I</div>
+                    <div>
+                        <div>Saldo Isaku</div>
+                        <div style="font-size: 0.8rem; color: #7f8c8d;">Tabungan digital</div>
+                    </div>
+                </div>
+                <div class="saldo-amount positive" id="saldo-isaku" onclick="editSaldo('isaku')">Rp 0</div>
+                <div class="saldo-actions">
+                    <button class="action-btn edit-saldo-btn" onclick="editSaldo('isaku')" title="Edit saldo">✏️</button>
+                    <button class="action-btn reset-saldo-btn" onclick="resetSingleSaldo('isaku')" title="Reset saldo">🔄</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="transaction-section">
+            <h2>Transaksi Baru</h2>
+            <form id="transaction-form">
+                <div class="form-group">
+                    <label for="description">Keterangan Transaksi</label>
+                    <input type="text" id="description" placeholder="Contoh: Beli makanan, Gaji bulanan, dll" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount">Jumlah (Rp)</label>
+                    <input type="number" id="amount" placeholder="Masukkan jumlah" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="type">Jenis Transaksi</label>
+                    <select id="type" required>
+                        <option value="" disabled selected>Pilih jenis transaksi</option>
+                        <option value="income">Pemasukan (Income)</option>
+                        <option value="expense">Pengeluaran (Expense)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="account">Akun yang Terpengaruh</label>
+                    <select id="account" required>
+                        <option value="" disabled selected>Pilih akun</option>
+                        <option value="bank">Saldo Bank</option>
+                        <option value="cash">Saldo Cash</option>
+                        <option value="credit">Saldo Kartu Kredit</option>
+                        <option value="shopeepay">Saldo Shopeepay</option>
+                        <option value="isaku">Saldo Isaku</option>
+                    </select>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="button" id="btn-income" class="btn-income">Tambah Pemasukan</button>
+                    <button type="button" id="btn-expense" class="btn-expense">Tambah Pengeluaran</button>
+                </div>
+                
+                <button type="button" id="btn-reset" class="btn-reset">Reset Semua Saldo</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="history-section">
+        <h2>Riwayat Transaksi</h2>
+        <div class="history-list" id="history-list">
+            <!-- Riwayat transaksi akan muncul di sini -->
+            <div style="text-align: center; color: #7f8c8d; padding: 20px;">
+                Belum ada transaksi. Tambahkan transaksi pertama Anda!
+            </div>
+        </div>
+    </div>
+    
+    <div class="total-saldo" id="total-saldo">
+        Total Seluruh Saldo: Rp 0
+    </div>
+    
+    <div class="footer">
+        <p>Aplikasi Pencatat Keuangan Sederhana &copy; 2023</p>
+        <p>Data disimpan di penyimpanan lokal browser Anda</p>
+    </div>
+
+    <!-- Modal untuk edit saldo -->
+    <div id="editSaldoModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Saldo</h3>
+            <div class="form-group">
+                <label id="modal-account-name">Saldo Bank</label>
+                <input type="number" id="modal-saldo-amount" placeholder="Masukkan jumlah saldo baru">
+            </div>
+            <div class="modal-buttons">
+                <button type="button" id="modal-cancel" class="btn-cancel">Batal</button>
+                <button type="button" id="modal-save" class="btn-save">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk edit transaksi -->
+    <div id="editTransactionModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Transaksi</h3>
+            <div class="form-group">
+                <label for="edit-description">Keterangan Transaksi</label>
+                <input type="text" id="edit-description" placeholder="Keterangan transaksi">
+            </div>
+            <div class="form-group">
+                <label for="edit-amount">Jumlah (Rp)</label>
+                <input type="number" id="edit-amount" placeholder="Masukkan jumlah" min="0">
+            </div>
+            <div class="form-group">
+                <label for="edit-type">Jenis Transaksi</label>
+                <select id="edit-type">
+                    <option value="income">Pemasukan (Income)</option>
+                    <option value="expense">Pengeluaran (Expense)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="edit-account">Akun yang Terpengaruh</label>
+                <select id="edit-account">
+                    <option value="bank">Saldo Bank</option>
+                    <option value="cash">Saldo Cash</option>
+                    <option value="credit">Saldo Kartu Kredit</option>
+                    <option value="shopeepay">Saldo Shopeepay</option>
+                    <option value="isaku">Saldo Isaku</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" id="edit-modal-cancel" class="btn-cancel">Batal</button>
+                <button type="button" id="edit-modal-save" class="btn-save">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inisialisasi saldo dari localStorage atau default
+        let saldo = {
+            bank: parseInt(localStorage.getItem('saldo_bank')) || 0,
+            cash: parseInt(localStorage.getItem('saldo_cash')) || 0,
+            credit: parseInt(localStorage.getItem('saldo_credit')) || 0,
+            shopeepay: parseInt(localStorage.getItem('saldo_shopeepay')) || 0,
+            isaku: parseInt(localStorage.getItem('saldo_isaku')) || 0
+        };
+
+        // Inisialisasi riwayat transaksi
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+        // Variabel untuk modal
+        let currentEditingAccount = null;
+        let currentEditingTransaction = null;
+
+        // Update tampilan saldo
+        function updateSaldoDisplay() {
+            document.getElementById('saldo-bank').textContent = formatCurrency(saldo.bank);
+            document.getElementById('saldo-cash').textContent = formatCurrency(saldo.cash);
+            document.getElementById('saldo-credit').textContent = formatCurrency(saldo.credit);
+            document.getElementById('saldo-shopeepay').textContent = formatCurrency(saldo.shopeepay);
+            document.getElementById('saldo-isaku').textContent = formatCurrency(saldo.isaku);
+            
+            // Update warna saldo
+            updateSaldoColor('bank', saldo.bank);
+            updateSaldoColor('cash', saldo.cash);
+            updateSaldoColor('credit', saldo.credit);
+            updateSaldoColor('shopeepay', saldo.shopeepay);
+            updateSaldoColor('isaku', saldo.isaku);
+            
+            // Update total saldo
+            const total = saldo.bank + saldo.cash + saldo.credit + saldo.shopeepay + saldo.isaku;
+            document.getElementById('total-saldo').textContent = `Total Seluruh Saldo: ${formatCurrency(total)}`;
+            
+            // Simpan ke localStorage
+            saveToLocalStorage();
+        }
+
+        // Update warna saldo berdasarkan nilai
+        function updateSaldoColor(account, amount) {
+            const element = document.getElementById(`saldo-${account}`);
+            if (amount >= 0) {
+                element.classList.remove('negative');
+                element.classList.add('positive');
+            } else {
+                element.classList.remove('positive');
+                element.classList.add('negative');
+            }
+        }
+
+        // Format mata uang Rupiah
+        function formatCurrency(amount) {
+            return 'Rp ' + amount.toLocaleString('id-ID');
+        }
+
+        // Simpan data ke localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('saldo_bank', saldo.bank);
+            localStorage.setItem('saldo_cash', saldo.cash);
+            localStorage.setItem('saldo_credit', saldo.credit);
+            localStorage.setItem('saldo_shopeepay', saldo.shopeepay);
+            localStorage.setItem('saldo_isaku', saldo.isaku);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+        }
+
+        // Tambahkan transaksi baru
+        function addTransaction(description, amount, type, account) {
+            // Validasi input
+            if (!description || amount <= 0 || !type || !account) {
+                alert('Harap isi semua field dengan benar!');
+                return false;
+            }
+            
+            // Tentukan apakah pemasukan atau pengeluaran
+            const transactionAmount = type === 'income' ? amount : -amount;
+            
+            // Update saldo
+            saldo[account] += transactionAmount;
+            
+            // Buat objek transaksi
+            const transaction = {
+                id: Date.now(),
+                date: new Date().toLocaleString('id-ID'),
+                description,
+                amount: transactionAmount,
+                type,
+                account,
+                originalAmount: amount // Simpan jumlah asli sebelum +/- untuk editing
+            };
+            
+            // Tambahkan ke riwayat
+            transactions.unshift(transaction);
+            
+            // Update tampilan
+            updateSaldoDisplay();
+            displayTransactions();
+            
+            // Reset form
+            document.getElementById('transaction-form').reset();
+            
+            return true;
+        }
+
+        // Tampilkan riwayat transaksi
+        function displayTransactions() {
+            const historyList = document.getElementById('history-list');
+            
+            if (transactions.length === 0) {
+                historyList.innerHTML = '<div style="text-align: center; color: #7f8c8d; padding: 20px;">Belum ada transaksi. Tambahkan transaksi pertama Anda!</div>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            
+            transactions.forEach(transaction => {
+                const transactionItem = document.createElement('div');
+                transactionItem.className = 'history-item';
+                transactionItem.dataset.id = transaction.id;
+                
+                const isIncome = transaction.amount > 0;
+                const amountClass = isIncome ? 'income-text' : 'expense-text';
+                const amountPrefix = isIncome ? '+' : '';
+                
+                transactionItem.innerHTML = `
+                    <div class="history-desc">
+                        <strong>${transaction.description}</strong>
+                        <div style="font-size: 0.8rem; color: #7f8c8d; margin-top: 3px;">
+                            ${getAccountName(transaction.account)} • ${transaction.date}
+                        </div>
+                    </div>
+                    <div class="history-amount ${amountClass}">
+                        ${amountPrefix}${formatCurrency(transaction.amount)}
+                    </div>
+                    <div>
+                        <button class="edit-btn" onclick="editTransaction(${transaction.id})">Edit</button>
+                        <button class="delete-btn" onclick="deleteTransaction(${transaction.id})">Hapus</button>
+                    </div>
+                `;
+                
+                historyList.appendChild(transactionItem);
+            });
+        }
+
+        // Hapus transaksi
+        function deleteTransaction(id) {
+            if (!confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) {
+                return;
+            }
+            
+            // Cari transaksi yang akan dihapus
+            const transactionIndex = transactions.findIndex(t => t.id === id);
+            
+            if (transactionIndex !== -1) {
+                const transaction = transactions[transactionIndex];
+                
+                // Kembalikan saldo ke keadaan sebelum transaksi
+                saldo[transaction.account] -= transaction.amount;
+                
+                // Hapus dari array
+                transactions.splice(transactionIndex, 1);
+                
+                // Update tampilan
+                updateSaldoDisplay();
+                displayTransactions();
+                
+                alert('Transaksi berhasil dihapus!');
+            }
+        }
+
+        // Edit transaksi
+        function editTransaction(id) {
+            // Cari transaksi yang akan diedit
+            const transactionIndex = transactions.findIndex(t => t.id === id);
+            
+            if (transactionIndex !== -1) {
+                const transaction = transactions[transactionIndex];
+                currentEditingTransaction = transaction;
+                
+                // Isi form modal dengan data transaksi
+                document.getElementById('edit-description').value = transaction.description;
+                document.getElementById('edit-amount').value = transaction.originalAmount || Math.abs(transaction.amount);
+                document.getElementById('edit-type').value = transaction.type;
+                document.getElementById('edit-account').value = transaction.account;
+                
+                // Tampilkan modal
+                document.getElementById('editTransactionModal').style.display = 'flex';
+            }
+        }
+
+        // Simpan perubahan transaksi
+        function saveTransactionEdit() {
+            if (!currentEditingTransaction) return;
+            
+            const description = document.getElementById('edit-description').value;
+            const amount = parseInt(document.getElementById('edit-amount').value);
+            const type = document.getElementById('edit-type').value;
+            const account = document.getElementById('edit-account').value;
+            
+            // Validasi
+            if (!description || amount <= 0 || !type || !account) {
+                alert('Harap isi semua field dengan benar!');
+                return;
+            }
+            
+            const transactionIndex = transactions.findIndex(t => t.id === currentEditingTransaction.id);
+            if (transactionIndex === -1) return;
+            
+            const oldTransaction = transactions[transactionIndex];
+            const newAmount = type === 'income' ? amount : -amount;
+            
+            // Jika akun berubah, perlu penyesuaian di kedua akun
+            if (oldTransaction.account !== account) {
+                // Kembalikan saldo akun lama
+                saldo[oldTransaction.account] -= oldTransaction.amount;
+                // Tambahkan ke akun baru
+                saldo[account] += newAmount;
+            } else {
+                // Hanya update selisih jika akun sama
+                saldo[account] += (newAmount - oldTransaction.amount);
+            }
+            
+            // Update transaksi
+            transactions[transactionIndex] = {
+                ...oldTransaction,
+                description,
+                amount: newAmount,
+                type,
+                account,
+                originalAmount: amount,
+                date: new Date().toLocaleString('id-ID')
+            };
+            
+            // Update tampilan
+            updateSaldoDisplay();
+            displayTransactions();
+            
+            // Tutup modal
+            document.getElementById('editTransactionModal').style.display = 'none';
+            currentEditingTransaction = null;
+            
+            alert('Transaksi berhasil diperbarui!');
+        }
+
+        // Edit saldo langsung
+        function editSaldo(account) {
+            currentEditingAccount = account;
+            
+            // Isi modal dengan saldo saat ini
+            const accountName = getAccountName(account);
+            const currentAmount = saldo[account];
+            
+            document.getElementById('modal-account-name').textContent = accountName;
+            document.getElementById('modal-saldo-amount').value = currentAmount;
+            
+            // Tampilkan modal
+            document.getElementById('editSaldoModal').style.display = 'flex';
+        }
+
+        // Simpan perubahan saldo
+        function saveSaldoEdit() {
+            if (!currentEditingAccount) return;
+            
+            const newAmount = parseInt(document.getElementById('modal-saldo-amount').value);
+            
+            if (isNaN(newAmount)) {
+                alert('Harap masukkan jumlah yang valid!');
+                return;
+            }
+            
+            // Update saldo
+            saldo[currentEditingAccount] = newAmount;
+            
+            // Tambahkan transaksi log untuk perubahan manual
+            const logTransaction = {
+                id: Date.now(),
+                date: new Date().toLocaleString('id-ID'),
+                description: `Penyesuaian saldo ${getAccountName(currentEditingAccount)}`,
+                amount: newAmount - saldo[currentEditingAccount],
+                type: newAmount > saldo[currentEditingAccount] ? 'income' : 'expense',
+                account: currentEditingAccount,
+                originalAmount: Math.abs(newAmount - saldo[currentEditingAccount]),
+                isManualAdjustment: true
+            };
+            
+            transactions.unshift(logTransaction);
+            
+            // Update tampilan
+            updateSaldoDisplay();
+            displayTransactions();
+            
+            // Tutup modal
+            document.getElementById('editSaldoModal').style.display = 'none';
+            currentEditingAccount = null;
+            
+            alert('Saldo berhasil diperbarui!');
+        }
+
+        // Reset saldo tunggal
+        function resetSingleSaldo(account) {
+            if (!confirm(`Apakah Anda yakin ingin mereset saldo ${getAccountName(account)} ke 0?`)) {
+                return;
+            }
+            
+            // Tambahkan transaksi log untuk reset
+            if (saldo[account] !== 0) {
+                const logTransaction = {
+                    id: Date.now(),
+                    date: new Date().toLocaleString('id-ID'),
+                    description: `Reset saldo ${getAccountName(account)}`,
+                    amount: -saldo[account],
+                    type: saldo[account] > 0 ? 'expense' : 'income',
+                    account: account,
+                    originalAmount: Math.abs(saldo[account]),
+                    isManualAdjustment: true
+                };
+                
+                transactions.unshift(logTransaction);
+            }
+            
+            // Reset saldo
+            saldo[account] = 0;
+            
+            // Update tampilan
+            updateSaldoDisplay();
+            displayTransactions();
+            
+            alert(`Saldo ${getAccountName(account)} berhasil direset ke 0!`);
+        }
+
+        // Dapatkan nama akun yang lengkap
+        function getAccountName(accountKey) {
+            const accountNames = {
+                bank: 'Saldo Bank',
+                cash: 'Saldo Cash',
+                credit: 'Saldo Kartu Kredit',
+                shopeepay: 'Saldo Shopeepay',
+                isaku: 'Saldo Isaku'
+            };
+            
+            return accountNames[accountKey] || accountKey;
+        }
+
+        // Reset semua saldo
+        function resetAllSaldo() {
+            if (!confirm('Apakah Anda yakin ingin mereset semua saldo ke 0? Ini akan menghapus semua data.')) {
+                return;
+            }
+            
+            // Tambahkan log untuk setiap saldo yang tidak nol
+            Object.keys(saldo).forEach(account => {
+                if (saldo[account] !== 0) {
+                    const logTransaction = {
+                        id: Date.now() + Math.random(),
+                        date: new Date().toLocaleString('id-ID'),
+                        description: `Reset semua saldo - ${getAccountName(account)}`,
+                        amount: -saldo[account],
+                        type: saldo[account] > 0 ? 'expense' : 'income',
+                        account: account,
+                        originalAmount: Math.abs(saldo[account]),
+                        isManualAdjustment: true
+                    };
+                    
+                    transactions.unshift(logTransaction);
+                }
+            });
+            
+            saldo = {
+                bank: 0,
+                cash: 0,
+                credit: 0,
+                shopeepay: 0,
+                isaku: 0
+            };
+            
+            updateSaldoDisplay();
+            displayTransactions();
+            
+            alert('Semua saldo telah direset ke 0!');
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update tampilan saat pertama kali dimuat
+            updateSaldoDisplay();
+            displayTransactions();
+            
+            // Event listener untuk tombol pemasukan
+            document.getElementById('btn-income').addEventListener('click', function() {
+                const description = document.getElementById('description').value;
+                const amount = parseInt(document.getElementById('amount').value);
+                const type = 'income';
+                const account = document.getElementById('account').value;
+                
+                addTransaction(description, amount, type, account);
+            });
+            
+            // Event listener untuk tombol pengeluaran
+            document.getElementById('btn-expense').addEventListener('click', function() {
+                const description = document.getElementById('description').value;
+                const amount = parseInt(document.getElementById('amount').value);
+                const type = 'expense';
+                const account = document.getElementById('account').value;
+                
+                addTransaction(description, amount, type, account);
+            });
+            
+            // Event listener untuk tombol reset
+            document.getElementById('btn-reset').addEventListener('click', resetAllSaldo);
+            
+            // Event listener untuk modal edit saldo
+            document.getElementById('modal-cancel').addEventListener('click', function() {
+                document.getElementById('editSaldoModal').style.display = 'none';
+                currentEditingAccount = null;
+            });
+            
+            document.getElementById('modal-save').addEventListener('click', saveSaldoEdit);
+            
+            // Event listener untuk modal edit transaksi
+            document.getElementById('edit-modal-cancel').addEventListener('click', function() {
+                document.getElementById('editTransactionModal').style.display = 'none';
+                currentEditingTransaction = null;
+            });
+            
+            document.getElementById('edit-modal-save').addEventListener('click', saveTransactionEdit);
+            
+            // Event listener untuk menutup modal saat klik di luar
+            window.addEventListener('click', function(event) {
+                const editSaldoModal = document.getElementById('editSaldoModal');
+                const editTransactionModal = document.getElementById('editTransactionModal');
+                
+                if (event.target === editSaldoModal) {
+                    editSaldoModal.style.display = 'none';
+                    currentEditingAccount = null;
+                }
+                
+                if (event.target === editTransactionModal) {
+                    editTransactionModal.style.display = 'none';
+                    currentEditingTransaction = null;
+                }
+            });
+            
+            // Event listener untuk form (mencegah submit default)
+            document.getElementById('transaction-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+            });
+            
+            // Set nilai default untuk contoh (opsional, bisa dihapus)
+            // Uncomment baris di bawah jika ingin memiliki contoh data awal
+            /*
+            if (transactions.length === 0) {
+                addTransaction("Gaji Bulanan", 5000000, "income", "bank");
+                addTransaction("Beli Makanan", 50000, "expense", "cash");
+                addTransaction("Topup Shopeepay", 200000, "expense", "bank");
+                addTransaction("Bonus Projek", 1000000, "income", "isaku");
+            }
+            */
+        });
+    </script>
+</body>
+</html>
